@@ -10,6 +10,7 @@ struct Model {
 
 enum Msg {
     FetchedItems(fetch::Result<Vec<String>>),
+    AddItem(),
 }
 
 fn update(msg: Msg, model: &mut Model, _orders: &mut impl Orders<Msg>) {
@@ -19,17 +20,27 @@ fn update(msg: Msg, model: &mut Model, _orders: &mut impl Orders<Msg>) {
         FetchedItems(resp) => match resp {
             Ok(items) => model.items = items,
             Err(e) => model.error = Some(format!("{:?}", e)),
-        }
+        },
+        AddItem() => model.items.push("goats".to_string()),
     }
 }
 
 fn view(model: &Model) -> Node<Msg> {
     div![
+        div![
+            input![
+                attrs!{At::Placeholder => "Item name"},
+            ],
+            button![
+                "Add",
+                ev(Ev::Click, |_| Msg::AddItem()),
+            ],
+        ],
         ul![
             model.items.iter().map(|item| {
                 li![item]
             })
-        ]
+        ],
     ]
 }
 
