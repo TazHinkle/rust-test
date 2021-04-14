@@ -1,5 +1,10 @@
 body {
     padding: 20px;
+    font-family: sans-serif;
+}
+
+li:hover {
+    color:rgb(253, 168, 9)
 }
 
 input {

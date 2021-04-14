@@ -18,6 +18,11 @@ async fn page() -> actix_web::Result<NamedFile> {
     Ok(NamedFile::open("./index.html")?)
 }
 
+#[post("/api/todo")]
+async fn post_item(req_body: String) -> impl Responder {
+    HttpResponse::Ok().body(req_body)
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
