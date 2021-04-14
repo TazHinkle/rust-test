@@ -8,6 +8,7 @@ use web_sys::window;
 struct Model {
     items: Vec<String>,
     error: Option<String>,
+    word: String,
 }
 
 enum Msg {
@@ -15,13 +16,11 @@ enum Msg {
     AddItem(),
     ClearAll(),
     NewWords(String),
-    ClearOne(web_sys::Event),
+    ClearOne(usize),
 }
 
 fn update(msg: Msg, model: &mut Model, _orders: &mut impl Orders<Msg>) {
     use Msg::{ClearOne, NewWords, AddItem, ClearAll, FetchedItems};
-
-    let mut word = "goats".to_string();
     
     match msg {
         FetchedItems(resp) => match resp {
@@ -29,19 +28,19 @@ fn update(msg: Msg, model: &mut Model, _orders: &mut impl Orders<Msg>) {
             Err(e) => model.error = Some(format!("{:?}", e)),
         },
         AddItem() => {           
-            model.items.push(word)
+            model.items.push(model.word.to_owned())
         },
         ClearAll() => {
             model.items.clear();
         },
         NewWords(text) => {
-            word = text.to_string();
+            model.word = text.to_string();
         },
-        ClearOne(thingy) => {
+        ClearOne(index) => {
+
             // this takes the last item, not the current item.
-            log(thingy);
-            model.items.pop();
-            // model.items.remove(number);
+            // model.items.pop();
+            model.items.remove(index);
         }
     }
 }
@@ -67,15 +66,19 @@ fn view(model: &Model) -> Node<Msg> {
             ]
         ],
         ul![
-            model.items.iter().map(|item| {
+            model.items.iter()
+            .enumerate()
+            .map(|(index, item)| {
+                let label = format!("{}, {}", index, item);
+                let index_copy = index.to_owned();
                 li![
-                    item, 
+                    label, 
                     button![
                         "Delete",
                         style!{St::Margin => px(5);},
-                        ev(Ev::Click, |thingy| Msg::ClearOne(thingy)),
+                        ev(Ev::Click, move |_| Msg::ClearOne(index_copy)),
                     ]
-                ]   
+                ]
             })
         ],
     ]
@@ -91,7 +94,7 @@ async fn get_todo_items() -> fetch::Result<Vec<String>> {
         .await
 }
 
-// async fn post_todo_item() -> fetch::Result<Vec<String>> {
+// async fn post_todo_item(String string) -> fetch::Result<Vec<String>> {
 //     Request::new("/api/todo")
 //         .method(fetch::Method::Post)
 //         .fetch()
