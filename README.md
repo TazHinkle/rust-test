@@ -35,3 +35,4 @@ The finished product should look something like this (but hopefully prettier):
 
 ## Send us your code
 Please create a zip file with all your code, email it to the Web Development Manager, and we'll take a look at your amazing finished product!
+# rust-test
