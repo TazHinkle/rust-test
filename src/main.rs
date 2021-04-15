@@ -41,6 +41,14 @@ async fn delete_item(data: web::Data<State>, path: web::Path<DeleteTodo>) -> Htt
         .json(todo_items.clone())
 }
 
+#[delete("/api/todo")]
+async fn clear_all(data: web::Data<State>) -> HttpResponse {
+    let mut todo_items = data.todo_items.lock().unwrap();
+    (*todo_items).clear();
+    HttpResponse::Ok()
+        .json(todo_items.clone())
+}
+
 #[get("/")]
 async fn page() -> actix_web::Result<NamedFile> {
     Ok(NamedFile::open("./index.html")?)
@@ -61,6 +69,7 @@ async fn main() -> std::io::Result<()> {
             .service(get_data)
             .service(post_data)
             .service(delete_item)
+            .service(clear_all)
             .service(page)
             .service(fs::Files::new("/static", "./pkg").show_files_listing())
     })
