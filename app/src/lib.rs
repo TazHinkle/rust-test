@@ -37,17 +37,13 @@ fn update(msg: Msg, model: &mut Model, _orders: &mut impl Orders<Msg>) {
             model.word = text.to_string();
         },
         ClearOne(index) => {
-
-            // this takes the last item, not the current item.
-            // model.items.pop();
             model.items.remove(index);
         }
     }
 }
 
 fn view(model: &Model) -> Node<Msg> {
-    let count = 0;
-
+    
     div![
         div![
             input![
@@ -66,16 +62,22 @@ fn view(model: &Model) -> Node<Msg> {
             ]
         ],
         ul![
+            C!["title-list"],
             model.items.iter()
             .enumerate()
             .map(|(index, item)| {
-                let label = format!("{}, {}", index, item);
+                let label = format!("{}", item);
                 let index_copy = index.to_owned();
                 li![
-                    label, 
+                    C!["title-list-item"],
+                    span![
+                        label,
+                        C!["title-list-item-label"],
+                    ],
                     button![
-                        "Delete",
-                        style!{St::Margin => px(5);},
+                        C!["title-list-item-delete"],
+                        "×",
+                        attrs!{At::Title => "Delete"},
                         ev(Ev::Click, move |_| Msg::ClearOne(index_copy)),
                     ]
                 ]

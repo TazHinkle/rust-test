@@ -1,6 +1,7 @@
 use actix_files::{NamedFile, self as fs};
 use actix_web::*;
 use serde_derive::*;
+use actix_web::{web, App, HttpResponse};
 
 #[derive(Serialize, Debug)]
 struct State {
@@ -18,10 +19,11 @@ async fn page() -> actix_web::Result<NamedFile> {
     Ok(NamedFile::open("./index.html")?)
 }
 
-#[post("/api/todo")]
-async fn post_item(req_body: String) -> impl Responder {
-    HttpResponse::Ok().body(req_body)
-}
+// #[post("/api/todo")]
+// async fn post_data(data: web::Data<State>) -> HttpRequest {
+//     HttpResponse::Ok()
+//         .json(data.todo_items.push("something".to_string()))
+// }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {

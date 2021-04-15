@@ -7,6 +7,41 @@ li:hover {
     color:rgb(253, 168, 9)
 }
 
+.title-list {
+    background-color: turquoise;
+    width: 250px;
+    list-style-type: none;
+    margin: 0;
+    padding: 4px;
+}
+
+.title-list-item {
+    display: block;
+    padding: 4px;
+    position: relative;
+    background-color: cornsilk;
+}
+
+.title-list-item + .title-list-item {
+    margin-top: 4px;
+}
+
+.title-list-item-label {
+    display: block;
+    padding-right: 22px;
+}
+
+.title-list-item-delete {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: tomato;
+    display: block;
+    border: none;
+    border-radius: 0;
+    height: 100%;
+}
+
 input {
     margin-bottom: 10px;
 }
