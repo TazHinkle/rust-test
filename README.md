@@ -12,7 +12,7 @@ To complete this test, you'll need to have git, rustc/cargo ([install here](http
 Please <b>do not</b> fork this repo.
 
 ## Run the example
-Open a terminal, navigate to where you cloned the project, go into the `/app` directory, and run `cargo make watch`. Wait for it to finish building, then open a new terminal window in the root directory of the project and run `cargo run`. Once it finishes building, you should be able to go to [localhost:8000](http://localhost:8000) and view a very simple app that looks like this:
+Open a terminal, navigate to where you cloned the project, go into the `/app` directory, and run `cargo make watch`. Wait for it to finish building, then open a new terminal window in the root directory of the project and run `cargo watch -x 'run --bin rust_test'`. Once it finishes building, you should be able to go to [localhost:8000](http://localhost:8000) and view a very simple app that looks like this:
 
 ![Rust test 1](https://lvt-dev.s3-us-west-2.amazonaws.com/rust-test/rust-test-3.png)
 
