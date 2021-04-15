@@ -1,6 +1,7 @@
 use seed::prelude::*;
 use seed::*;
 use seed::browser::fetch as fetch;
+use serde_derive::*;
 use web_sys::window;
 
 
@@ -11,6 +12,11 @@ struct Model {
     word: String,
 }
 
+#[derive(Serialize)]
+struct PostTodo {
+    name: String,
+}
+
 enum Msg {
     FetchedItems(fetch::Result<Vec<String>>),
     AddItem(),
@@ -19,7 +25,7 @@ enum Msg {
     ClearOne(usize),
 }
 
-fn update(msg: Msg, model: &mut Model, _orders: &mut impl Orders<Msg>) {
+fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
     use Msg::{ClearOne, NewWords, AddItem, ClearAll, FetchedItems};
     
     match msg {
@@ -27,8 +33,9 @@ fn update(msg: Msg, model: &mut Model, _orders: &mut impl Orders<Msg>) {
             Ok(items) => model.items = items,
             Err(e) => model.error = Some(format!("{:?}", e)),
         },
-        AddItem() => {           
-            model.items.push(model.word.to_owned())
+        AddItem() => {
+            let new_items = post_todo_item(model.word.to_owned());
+            orders.perform_cmd(async { Msg::FetchedItems(new_items.await) });
         },
         ClearAll() => {
             model.items.clear();
@@ -43,7 +50,6 @@ fn update(msg: Msg, model: &mut Model, _orders: &mut impl Orders<Msg>) {
 }
 
 fn view(model: &Model) -> Node<Msg> {
-    
     div![
         div![
             input![
@@ -96,15 +102,18 @@ async fn get_todo_items() -> fetch::Result<Vec<String>> {
         .await
 }
 
-// async fn post_todo_item(String string) -> fetch::Result<Vec<String>> {
-//     Request::new("/api/todo")
-//         .method(fetch::Method::Post)
-//         .fetch()
-//         .await?
-//         .check_status()?
-//         .json()
-//         .await
-// }
+async fn post_todo_item(string: String) -> fetch::Result<Vec<String>> {
+    Request::new("/api/todo")
+        .method(fetch::Method::Post)
+        .json(&PostTodo {
+            name: string.to_owned()
+        })?
+        .fetch()
+        .await?
+        .check_status()?
+        .json()
+        .await
+}
 
 fn init(_: Url, orders: &mut impl Orders<Msg>) -> Model {
     orders.perform_cmd(async { Msg::FetchedItems(get_todo_items().await) });
