@@ -2,7 +2,6 @@ use seed::prelude::*;
 use seed::*;
 use seed::browser::fetch as fetch;
 use serde_derive::*;
-use web_sys::window;
 
 
 #[derive(Default)]
@@ -38,7 +37,8 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
             orders.perform_cmd(async { Msg::FetchedItems(new_items.await) });
         },
         ClearAll() => {
-            model.items.clear();
+            let new_items = clear_all_todo_items();
+            orders.perform_cmd(async { Msg::FetchedItems(new_items.await) });
         },
         NewWords(text) => {
             model.word = text.to_string();
@@ -118,6 +118,16 @@ async fn post_todo_item(string: String) -> fetch::Result<Vec<String>> {
 
 async fn delete_todo_item(index: usize) -> fetch::Result<Vec<String>> {
     Request::new(format!("/api/todo/{}", index.to_string()))
+        .method(fetch::Method::Delete)
+        .fetch()
+        .await?
+        .check_status()?
+        .json()
+        .await
+}
+
+async fn clear_all_todo_items() -> fetch::Result<Vec<String>> {
+    Request::new("/api/todo")
         .method(fetch::Method::Delete)
         .fetch()
         .await?
