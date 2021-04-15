@@ -14,6 +14,11 @@ struct PostTodo {
     name: String,
 }
 
+#[derive(Deserialize)]
+struct DeleteTodo {
+    index: usize,
+}
+
 #[get("/api/todo")]
 async fn get_data(data: web::Data<State>) -> HttpResponse {
     HttpResponse::Ok()
@@ -24,6 +29,14 @@ async fn get_data(data: web::Data<State>) -> HttpResponse {
 async fn post_data(data: web::Data<State>, json: web::Json<PostTodo>) -> HttpResponse {
     let mut todo_items = data.todo_items.lock().unwrap();
     (*todo_items).push(json.name.to_owned());
+    HttpResponse::Ok()
+        .json(todo_items.clone())
+}
+
+#[delete("/api/todo/{index}")]
+async fn delete_item(data: web::Data<State>, path: web::Path<DeleteTodo>) -> HttpResponse {
+    let mut todo_items = data.todo_items.lock().unwrap();
+    (*todo_items).remove(path.index);
     HttpResponse::Ok()
         .json(todo_items.clone())
 }
@@ -47,6 +60,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(state.clone())
             .service(get_data)
             .service(post_data)
+            .service(delete_item)
             .service(page)
             .service(fs::Files::new("/static", "./pkg").show_files_listing())
     })
