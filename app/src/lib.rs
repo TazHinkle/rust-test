@@ -22,11 +22,11 @@ enum Msg {
     AddItem(),
     ClearAll(),
     NewWords(String),
-    ClearOne(usize),
+    DeleteOne(usize),
 }
 
 fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
-    use Msg::{ClearOne, NewWords, AddItem, ClearAll, FetchedItems};
+    use Msg::{DeleteOne, NewWords, AddItem, ClearAll, FetchedItems};
     
     match msg {
         FetchedItems(resp) => match resp {
@@ -43,8 +43,9 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
         NewWords(text) => {
             model.word = text.to_string();
         },
-        ClearOne(index) => {
-            model.items.remove(index);
+        DeleteOne(index) => {
+            let new_items = delete_todo_item(index);
+            orders.perform_cmd(async { Msg::FetchedItems(new_items.await) });
         }
     }
 }
@@ -84,7 +85,7 @@ fn view(model: &Model) -> Node<Msg> {
                         C!["title-list-item-delete"],
                         "×",
                         attrs!{At::Title => "Delete"},
-                        ev(Ev::Click, move |_| Msg::ClearOne(index_copy)),
+                        ev(Ev::Click, move |_| Msg::DeleteOne(index_copy)),
                     ]
                 ]
             })
@@ -108,6 +109,16 @@ async fn post_todo_item(string: String) -> fetch::Result<Vec<String>> {
         .json(&PostTodo {
             name: string.to_owned()
         })?
+        .fetch()
+        .await?
+        .check_status()?
+        .json()
+        .await
+}
+
+async fn delete_todo_item(index: usize) -> fetch::Result<Vec<String>> {
+    Request::new(format!("/api/todo/{}", index.to_string()))
+        .method(fetch::Method::Delete)
         .fetch()
         .await?
         .check_status()?
