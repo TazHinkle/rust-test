@@ -4,12 +4,16 @@ body {
 }
 
 li:hover {
-    color:rgb(253, 168, 9)
+    color:#525ccb;
+}
+
+.clear-button {
+    margin-bottom: 8px;
 }
 
 .title-list {
-    background-color: turquoise;
-    width: 250px;
+    background-color: rgb(188, 189, 192);
+    width: 221px;
     list-style-type: none;
     margin: 0;
     padding: 4px;
@@ -19,7 +23,7 @@ li:hover {
     display: block;
     padding: 4px;
     position: relative;
-    background-color: cornsilk;
+    background-color: rgb(153, 203, 82);
 }
 
 .title-list-item + .title-list-item {
@@ -28,19 +32,20 @@ li:hover {
 
 .title-list-item-label {
     display: block;
-    padding-right: 22px;
+    padding-right: 37px;
 }
 
 .title-list-item-delete {
     position: absolute;
+    font-size: large;
     top: 0;
     right: 0;
-    background-color: tomato;
+    background-color: #c152cb;
     display: block;
     border: none;
     border-radius: 0;
     height: 100%;
-    padding: 0 5px;
+    padding: 0 15px;
 }
 
 input {

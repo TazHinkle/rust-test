@@ -65,6 +65,7 @@ fn view(model: &Model) -> Node<Msg> {
             ],
             div![
                 button![
+                    C!{"clear-button"},
                     "Clear All",
                     ev(Ev::Click, |_| Msg::ClearAll()),
                 ]
