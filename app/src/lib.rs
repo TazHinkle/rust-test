@@ -34,6 +34,7 @@ fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
         },
         AddItem() => {
             let new_items = post_todo_item(model.word.to_owned());
+            model.word = "".to_string();
             orders.perform_cmd(async { Msg::FetchedItems(new_items.await) });
         },
         ClearAll() => {
@@ -55,6 +56,7 @@ fn view(model: &Model) -> Node<Msg> {
         div![
             input![
                 attrs!{At::Placeholder => "Item Name"},
+                attrs!{At::Value => model.word},
                 input_ev("input", |text| Msg::NewWords(text)),
             ],
             button![
